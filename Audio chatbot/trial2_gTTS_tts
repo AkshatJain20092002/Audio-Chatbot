@@ -1,0 +1,11 @@
+from gtts import gTTS
+import os
+
+mytext = input("Enter some text: ")
+language = 'en'
+
+myobj = gTTS(text=mytext, lang=language, slow=False)
+
+myobj.save("welcome1.mp3")
+os.system("mpg321 welcome1.mp3")
+

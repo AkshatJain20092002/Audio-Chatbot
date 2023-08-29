@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Speech-to-Text GPT-3 Bot</title>
+  </head>
+  <body>
+    <h1>Speech-to-Text GPT-3 Bot</h1>
+    <p>Press the button and speak:</p>
+    <button onclick="record()">Speak</button>
+    <p>You said: <span id="user-text"></span></p>
+    <p>Bot: <span id="bot-text"></span></p>
+
+    <script>
+      function record() {
+        let recognition = new webkitSpeechRecognition();
+        recognition.onresult = function(event) {
+          let userText = event.results[0][0].transcript;
+          document.getElementById("user-text").innerHTML = userText;
+          getBotResponse(userText);
+        }
+        recognition.start();
+      }
+
+      function getBotResponse(userText) {
+        fetch('/api?prompt=' + userText)
+          .then(response => response.text())
+          .then(response => {
+            document.getElementById("bot-text").innerHTML = response;
+            speak(response);
+          });
+      }
+
+      function speak(text) {
+        let synth = window.speechSynthesis;
+        let utterance = new SpeechSynthesisUtterance(text);
+        synth.speak(utterance);
+      }
+    </script>
+  </body>
+</html>

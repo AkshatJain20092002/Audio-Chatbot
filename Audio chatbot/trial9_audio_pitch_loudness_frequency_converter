@@ -1,0 +1,41 @@
+import pydub
+from pydub import AudioSegment
+from pydub.playback import play
+from pydub.effects import strip_silence
+import pyaudio
+
+CHUNK = 1024
+FORMAT = pyaudio.paInt16
+CHANNELS = 1
+RATE = 44100
+
+def process_audio(filename, semitones=0, speed=1.0, volume=0.0, output_filename="", loudness_db=0, high_pass_filter_hz=0, low_pass_filter_hz=0):
+    sound = AudioSegment.from_file(filename, format='wav')
+    
+    if semitones != 0:
+        sound = sound + semitones
+    
+    if speed != 1.0:
+        sound = sound.speedup(playback_speed=speed)
+    
+    if volume != 0.0:
+        sound = sound + volume
+    
+    sound = strip_silence(sound, silence_len=1000, silence_thresh=-40)
+
+    if loudness_db != 0:
+        sound = sound.apply_gain(loudness_db)
+    
+    if high_pass_filter_hz != 0:
+        sound = sound.high_pass_filter(high_pass_filter_hz)
+    
+    if low_pass_filter_hz != 0:
+        sound = sound.low_pass_filter(low_pass_filter_hz)
+    
+    sound.export(output_filename, format='wav')
+    
+    return sound
+
+processed_sound = process_audio('sample.wav', semitones=3, speed=0.5, volume=1.2, output_filename='processed_sample.wav', loudness_db=5, high_pass_filter_hz=100, low_pass_filter_hz=10000)
+
+play(processed_sound)

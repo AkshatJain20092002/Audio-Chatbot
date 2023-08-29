@@ -1,0 +1,85 @@
+import openai
+import pyttsx3
+import speech_recognition as sr
+
+openai.api_key =  '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'
+
+r = sr.Recognizer()
+engine = pyttsx3.init()
+rate = engine.getProperty('rate')
+engine.setProperty('rate', rate-50)
+
+def ask_gpt(prompt):
+    response = openai.Completion.create(
+        engine="text-davinci-002",
+        prompt=prompt,
+        max_tokens=1024,
+        n=1,
+        stop=None,
+        temperature=0.5,
+    )
+
+    message = response.choices[0].text.strip()
+    return message
+
+while True:
+    with sr.Microphone() as source:
+        print("Speak:")
+        audio = r.listen(source)
+
+    try:
+        prompt = r.recognize_google(audio)
+        if prompt.lower() == "bye":
+            print()
+            print("You said: bye")
+            print("Bye, tumharo din achha beete lala/lali")
+            break
+        print("You said: " + prompt)
+        
+        # Check user input for tone keywords
+        if "laughter" in prompt.lower():
+            engine_laughter = pyttsx3.init()
+            engine_laughter.setProperty('rate', rate-50)
+            engine_laughter.setProperty('voice', 'english+f3')
+            bot_response = ask_gpt(prompt)
+            print("Bot (laughter):", bot_response)
+            engine_laughter.say(bot_response)
+            engine_laughter.runAndWait()
+            
+        elif "sad" in prompt.lower():
+            engine_sad = pyttsx3.init()
+            engine_sad.setProperty('rate', rate-50)
+            engine_sad.setProperty('voice', 'english+m7')
+            bot_response = ask_gpt(prompt)
+            print("Bot (sad):", bot_response)
+            engine_sad.say(bot_response)
+            engine_sad.runAndWait()
+            
+        elif "crying" in prompt.lower():
+            engine_crying = pyttsx3.init()
+            engine_crying.setProperty('rate', rate-50)
+            engine_crying.setProperty('voice', 'english+f4')
+            bot_response = ask_gpt(prompt)
+            print("Bot (crying):", bot_response)
+            engine_crying.say(bot_response)
+            engine_crying.runAndWait()
+            
+        elif "happy" in prompt.lower():
+            engine_happy = pyttsx3.init()
+            engine_happy.setProperty('rate', rate-50)
+            engine_happy.setProperty('voice', 'english+f1')
+            bot_response = ask_gpt(prompt)
+            print("Bot (happy):", bot_response)
+            engine_happy.say(bot_response)
+            engine_happy.runAndWait()
+            
+        else:
+            bot_response = ask_gpt(prompt)
+            print("Bot:", bot_response)
+            engine.say(bot_response)
+            engine.runAndWait()
+            
+    except sr.UnknownValueError:
+        print("Could not understand audio")
+    except sr.RequestError as e:
+        print("Could not request results; {0}".format(e))
