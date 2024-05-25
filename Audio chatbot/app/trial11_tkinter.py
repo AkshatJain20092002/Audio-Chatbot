@@ -4,7 +4,7 @@ from gtts import gTTS
 import os
 import speech_recognition as sr
 
-openai.api_key = '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'
+openai.api_key = 'API_KEY'
 
 def ask_gpt(prompt):
     response = openai.Completion.create(
