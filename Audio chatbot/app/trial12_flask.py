@@ -3,7 +3,7 @@ import openai
 import speech_recognition as sr
 import pyttsx3
 
-openai.api_key = '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'
+openai.api_key = 'API_KEY'
 
 app = Flask(__name__)
 
